@@ -3,6 +3,7 @@ package com.imooc.miaosha.service;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,18 @@ public class MiaoshaUserService {
 	
 	@Autowired
 	RedisService redisService;
+	
+	public MiaoshaUser getByToken(HttpServletResponse response, String token) {
+		if(StringUtils.isEmpty(token)) {
+			return null;
+		}
+		MiaoshaUser user = redisService.get(MiaoshaUserKey.token, token, MiaoshaUser.class);
+		//延长有效期
+		if(user != null) {
+			addCookie(response, token, user);
+		}
+		return user;
+	}
 
 	public boolean login(HttpServletResponse response,LoginVo loginVo) {
 		if(loginVo == null) {
@@ -64,6 +77,8 @@ public class MiaoshaUserService {
 	public MiaoshaUser getById(Long id) {
 		return miaoshaUserDao.getById(id);
 	}
+
+	
 	
 	
 	

@@ -60,10 +60,5 @@ public class MiaoshaUser {
 		this.login_count = login_count;
 	}
 	
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", nickname=" + nickname + "]";
-	}
-	
 	
 }
