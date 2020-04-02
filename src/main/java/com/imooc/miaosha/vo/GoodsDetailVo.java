@@ -3,11 +3,11 @@ package com.imooc.miaosha.vo;
 import com.imooc.miaosha.domain.MiaoshaUser;
 
 public class GoodsDetailVo {
+
 	private int miaoshaStatus = 0;
 	private int remainSeconds = 0;
-	private GoodsVo goods;
+	private GoodsVo goods ;
 	private MiaoshaUser user;
-	
 	public int getMiaoshaStatus() {
 		return miaoshaStatus;
 	}
@@ -32,6 +32,5 @@ public class GoodsDetailVo {
 	public void setUser(MiaoshaUser user) {
 		this.user = user;
 	}
-	
 	
 }
