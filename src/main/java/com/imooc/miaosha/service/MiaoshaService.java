@@ -2,6 +2,7 @@ package com.imooc.miaosha.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.imooc.miaosha.domain.MiaoshaOrder;
 import com.imooc.miaosha.domain.MiaoshaUser;
@@ -25,9 +26,16 @@ public class MiaoshaService {
 	 * 1.减库存
 	 * 2.写入订单信息
 	 */
+	@Transactional
 	public OrderInfo miaosha(MiaoshaUser user,GoodsVo goods) {
-		goodService.reduceStock(goods);
-		return orderService.createOrder(user,goods);
+		boolean success = goodService.reduceStock(goods);
+		if(success) {
+			return orderService.createOrder(user,goods);
+		} else {
+			setGoodsOver(goods.getId());
+			return null;
+		}
+		
 	}
 	
 	public long getMiaoshaResult(Long userId, long goodsId) {
