@@ -75,12 +75,13 @@ public class GoodsController {
 	}
 	
 	//商品详情页
+	
 	@RequestMapping(value="/detail/{goodsId}",produces="application/json")
 	@ResponseBody
 	public Result<GoodsDetailVo> goodsDetail(HttpServletRequest request,HttpServletResponse response,Model model,
 			MiaoshaUser user,@PathVariable("goodsId")Long goodsId) {
 		GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
-		//model.addAttribute("goods",goods);
+		
 		
 		//秒杀数据计算
 		long startTime = goods.getStartDate().getTime();

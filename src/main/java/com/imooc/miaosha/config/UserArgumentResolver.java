@@ -1,10 +1,7 @@
 package com.imooc.miaosha.config;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Service;
@@ -13,48 +10,34 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import com.imooc.miaosha.access.UserContext;
+import com.imooc.miaosha.controller.GoodsController;
 import com.imooc.miaosha.domain.MiaoshaUser;
 import com.imooc.miaosha.service.MiaoshaUserService;
 
 @Service
 public class UserArgumentResolver implements HandlerMethodArgumentResolver{
 	
+	
+	
 	@Autowired
 	MiaoshaUserService userService;
 
-	@Override
+	
 	public boolean supportsParameter(MethodParameter parameter) {
 		Class<?> clazz = parameter.getParameterType();
 		return clazz == MiaoshaUser.class;
 	}
 
-	@Override
+	
 	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
 			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-		HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
 		
-		String paramToken = request.getParameter(MiaoshaUserService.COOKIE_NAME_TOKEN);
-		String cookieToken = getCookieValue(request,MiaoshaUserService.COOKIE_NAME_TOKEN);
-		if(StringUtils.isEmpty(paramToken) && StringUtils.isEmpty(cookieToken)) {
-			return null;
-		}
-		String token = StringUtils.isEmpty(paramToken)?cookieToken:paramToken;
-		return userService.getByToken(response,token);
+		return UserContext.getUser();
+		
 	}
 
-	private String getCookieValue(HttpServletRequest request, String cookieName) {
-		Cookie[] cookies = request.getCookies();
-		if(cookies == null || cookies.length <= 0) {
-			return null;
-		}
-		for(Cookie cookie : cookies) {
-			if(cookie.getName().equals(cookieName)) {
-				return cookie.getValue();
-			}
-		}
-		return null;
-	}
+	
 	
 	
 }
