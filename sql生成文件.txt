@@ -1,0 +1,81 @@
+//创建秒杀数据库
+create database miaosha;
+
+//创建goods表
+CREATE TABLE `goods` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `goods_name` varchar(16) DEFAULT NULL,
+  `goods_title` varchar(64) DEFAULT NULL,
+  `goods_img` varchar(64) DEFAULT NULL,
+  `goods_detail` longtext,
+  `goods_price` decimal(10,2) DEFAULT NULL,
+  `goods_stock` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+//插入商品数据
+INSERT INTO `goods` (`id`, `goods_name`, `goods_title`, `goods_img`, `goods_detail`, `goods_price`, `goods_stock`) VALUES (1, 'iphoneX', 'alalalal', '/img/iphone8.png', 'dwdwd', 8598.00, 10);
+INSERT INTO `goods` (`id`, `goods_name`, `goods_title`, `goods_img`, `goods_detail`, `goods_price`, `goods_stock`) VALUES (2, 'huaweiMeta9', 'alibaba', '/img/meta10.png', 'dadada', 2356.00, 20);
+
+
+//创建miaosha_goods表
+CREATE TABLE `miaosha_goods` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `goods_id` bigint(20) DEFAULT NULL,
+  `miaosha_price` double(10,2) DEFAULT NULL,
+  `stock_count` int(11) DEFAULT NULL,
+  `start_date` datetime DEFAULT NULL,
+  `end_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+//插入秒杀商品数据
+INSERT INTO `miaosha_goods` (`id`, `goods_id`, `miaosha_price`, `stock_count`, `start_date`, `end_date`) VALUES (1, 1, 0.01, 200, '2018-7-23 14:42:01', '2020-7-31 14:43:22');
+INSERT INTO `miaosha_goods` (`id`, `goods_id`, `miaosha_price`, `stock_count`, `start_date`, `end_date`) VALUES (2, 2, 0.01, 9, '2018-7-23 14:32:28', '2020-7-31 14:32:36');
+
+
+//创建miaosha_order表
+CREATE TABLE `miaosha_order` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) DEFAULT NULL,
+  `order_id` bigint(20) DEFAULT NULL,
+  `goods_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `u_uid_gid` (`user_id`,`goods_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4101 DEFAULT CHARSET=utf8;
+
+
+//插入秒杀用户信息，由于系统主要侧重秒杀，因此没有做用户注册界面，直接将用户信息插入到数据库中
+INSERT INTO `miaosha_user` (`id`, `nickname`, `password`, `salt`, `head`, `register_date`, `last_login_date`, `login_count`) VALUES (15010058963, 'st', 'b7797cce01b4b131b433b6acf4add449', '1a2b3c', NULL, NULL, NULL, 0);
+
+
+//创建miaosha_user表
+CREATE TABLE `miaosha_user` (
+  `id` bigint(20) NOT NULL COMMENT '用户id，手机号码',
+  `nickname` varchar(255) NOT NULL,
+  `password` varchar(32) DEFAULT NULL COMMENT 'MD5（MD5（pass明文+固定salt）+salt）',
+  `salt` varchar(10) DEFAULT NULL,
+  `head` varchar(128) DEFAULT NULL COMMENT '头像，云存储的ID',
+  `register_date` datetime DEFAULT NULL COMMENT '注册时间',
+  `last_login_date` datetime DEFAULT NULL COMMENT '上次登陆时间',
+  `login_count` int(11) DEFAULT '0' COMMENT '登陆次数',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+//创建order_info表
+CREATE TABLE `order_info` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) DEFAULT NULL,
+  `goods_id` bigint(20) DEFAULT NULL,
+  `delivery_addr_id` bigint(20) DEFAULT NULL,
+  `goods_name` varchar(16) DEFAULT NULL,
+  `goods_count` int(11) DEFAULT NULL,
+  `goods_price` decimal(10,2) DEFAULT NULL,
+  `order_channel` tinyint(4) DEFAULT NULL,
+  `status` tinyint(4) DEFAULT '0',
+  `create_date` datetime DEFAULT NULL,
+  `pay_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8247 DEFAULT CHARSET=utf8;
+
