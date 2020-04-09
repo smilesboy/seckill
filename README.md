@@ -1,6 +1,6 @@
 ## Java高并发秒杀项目
 
-项目安装见博客：Java高并发秒杀项目
+项目安装见博客：[Java高并发秒杀项目](https://blog.csdn.net/nageaixiaodenanhai/article/details/105412877)
 
 项目地址：
 
