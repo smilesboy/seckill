@@ -2,7 +2,7 @@
 
 项目安装见博客：[Java高并发秒杀项目](https://blog.csdn.net/nageaixiaodenanhai/article/details/105412877)
 
-项目地址：
+项目地址：http://39.106.104.91:8080/login/to_login  登录手机号：15010058964  密码：123456
 
 #### 项目介绍
 
@@ -60,13 +60,76 @@ JS/CSS压缩，减少流量。多个JS/CSS组合，减少连接数。 CDN就近�
 
 ##### 1.测试环境
 
+服务器:(Mysq、Redis服务也均安装在本机上 ，RabbitMQ安装在远程服务器上）
+
+内存： 8G 
+
+Java版本：1.8.0_161 Java HotSpot(TM) 64-Bit Server VM (build 25.161-b12, mixed mode)  
+
+MySQL：5.7.28-log MySQL Community Server (GPL)  
+
+Redis：3.0.504 
+
 ##### 2.测试方法
 
+测试工具使用Jmeter并发测试工具，为保证无非相关变量的影响，每次测试的并发线程数均设为1000，并发时间1s，并发循环次数为10次，如图所示： 
 
+![1586570877041](C:\Users\sutian\AppData\Local\Temp\1586570877041.png)
 
-#### 
+ 对goods/to_list进行压测
 
+优化前
 
+![1586570917972](C:\Users\sutian\AppData\Local\Temp\1586570917972.png)
 
+优化后
 
+![1586570934300](C:\Users\sutian\AppData\Local\Temp\1586570934300.png)
 
+对于上图的两个测试，我们比较关注的是聚合报告里的 ThoughPut 的值，其值可以作为吞吐量的一个较好估计。  由图可见：  
+
+优化前，系统吞吐量为：729.9/sec  
+
+优化后，系统吞吐量为：2209.0/sec  
+
+也就意味着，加速比为：3.03
+
+ 
+
+对goods/detail/{goodsId}进行压测
+
+优化前
+
+![1586571933233](C:\Users\sutian\AppData\Local\Temp\1586571933233.png)
+
+优化后
+
+![1586571953624](C:\Users\sutian\AppData\Local\Temp\1586571953624.png)
+
+通过比以上两图，会发现，似乎区别不是特别明显，很容易让人觉得优化没有太大的作用，其实不然 ，这种情况应该是由Jmeter自身导致的，因为Jmeter做测试的时候并不会依赖于其他浏览器，只是发起http请求，而浏览器所具备的一些功能Jemter并没有，比如，缓存，利用Jmeter进行测试并不能得出一个如意的结果，但是，我们可以通过浏览器来大致的了解页面静态化后的一些改变。如图： 
+
+![1586572207379](C:\Users\sutian\AppData\Local\Temp\1586572207379.png)
+
+可以清楚的看到，这个页面大部分的内容都被“已缓存”，只有700多个字节的对象被请求并传输，比之前传输整个html页面的大小小很多，这也就达到了我们优化前的目的了。 
+
+对秒杀接口做压测
+
+对于接口测试，我实现准备了1000个user和cookie，具体脚本见src/main/java/com/imooc/miaosha/util/UserUtil.java下的代码，在Jmeter中使用参数方法可自行百度，如图： 
+
+![1586572602506](C:\Users\sutian\AppData\Local\Temp\1586572602506.png)
+
+对于秒杀接口，我们只对优化后的接口进行压测，测试的情况分为两类：
+
+1、秒杀库存充足
+
+2、秒杀库存不足
+
+对于秒杀库存充足的情况，我们设置初始的库存为200，然后，并发量和其他测试设置一致，结果如图：
+
+![1586572790030](C:\Users\sutian\AppData\Local\Temp\1586572790030.png)
+
+对于秒杀库存不足的情况，我们设置初始的库存为0，然后，并发量和其他测试设置一致，结果如图： 
+
+![1586572859251](C:\Users\sutian\AppData\Local\Temp\1586572859251.png)
+
+对于处理逻辑比较复杂的接口而言，最好和最坏的情况能达到这样的一个吞吐量，同时保证线程安全性，比较满意。 
